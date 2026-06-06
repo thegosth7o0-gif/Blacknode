@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Omega</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: monospace; background: #000000; color: #e0e0e0; min-height: 100vh; }
+
+    .header { text-align: center; padding: 2.5rem 1rem 1.5rem; border-bottom: 1px solid #3a0000; }
+    .logo-icon { margin: 0 auto 12px; width: 64px; height: 64px; }
+    .logo { font-size: 26px; font-weight: 700; color: #ff3333; letter-spacing: 4px; text-transform: uppercase; }
+    .logo span { color: #00ff41; }
+    .tagline { font-size: 11px; color: #5a1a1a; letter-spacing: 3px; margin-top: 6px; text-transform: uppercase; }
+
+    .terminal-bar {
+      background: #0d0000; border: 1px solid #3a0000; border-radius: 8px;
+      margin: 1.5rem auto; padding: 0.75rem 1rem; font-size: 12px;
+      display: flex; align-items: center; gap: 8px; max-width: 700px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot.r{background:#ff2222;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+    .cursor { display: inline-block; width: 8px; height: 13px; background: #ff3333; animation: blink 1s infinite; vertical-align: middle; margin-left: 2px; }
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+    .container { max-width: 700px; margin: 0 auto; padding: 0 1rem; }
+
+    .services { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 0 1.5rem; }
+    .service-card { background: #0d0000; border: 1px solid #2a0000; border-radius: 8px; padding: 1rem; text-align: center; }
+    .service-icon { font-size: 22px; color: #ff3333; margin-bottom: 8px; }
+    .service-title { font-size: 11px; color: #ff3333; letter-spacing: 2px; text-transform: uppercase; font-weight: 500; }
+    .service-desc { font-size: 10px; color: #4a1a1a; margin-top: 4px; line-height: 1.5; }
+
+    .divider { border: none; border-top: 1px solid #2a0000; margin: 0 0 1.5rem; }
+
+    .section-label { font-size: 11px; color: #ff3333; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+    .section-label::before { content: '//'; color: #3a0000; }
+
+    /* TABS */
+    .tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .tab-btn {
+      background: #0d0000; border: 1px solid #2a0000; border-radius: 6px;
+      color: #7a3a3a; font-family: monospace; font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; padding: 8px 14px; cursor: pointer; transition: all 0.2s;
+    }
+    .tab-btn:hover { border-color: #ff3333; color: #ff3333; }
+    .tab-btn.active { border-color: #ff3333; color: #ff3333; background: #ff333318; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* GLOSSÁRIO */
+    .attack-category { margin-bottom: 1.5rem; }
+    .category-title { font-size: 12px; color: #ff3333; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #2a0000; display: flex; align-items: center; gap: 8px; }
+    .attack-grid { display: flex; flex-direction: column; gap: 8px; }
+    .attack-card { background: #0d0000; border: 1px solid #2a0000; border-radius: 6px; padding: 10px 14px; cursor: pointer; transition: border 0.2s; }
+    .attack-card:hover { border-color: #ff333344; }
+    .attack-header { display: flex; justify-content: space-between; align-items: center; }
+    .attack-name { font-size: 12px; color: #00ff41; font-weight: 500; }
+    .attack-tag { font-size: 10px; color: #ff3333; background: #ff333318; padding: 2px 8px; border-radius: 4px; }
+    .attack-desc { font-size: 11px; color: #4a2a2a; margin-top: 6px; line-height: 1.5; }
+
+    /* CHAPÉUS */
+    .hat-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .hat-table th { color: #ff3333; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 8px 12px; border-bottom: 1px solid #2a0000; text-align: left; }
+    .hat-table td { padding: 10px 12px; border-bottom: 1px solid #1a0000; color: #4a2a2a; }
+    .hat-table td:first-child { color: #e0e0e0; font-weight: 500; }
+    .hat-white { color: #e0e0e0 !important; }
+    .hat-black { color: #ff4444 !important; }
+    .hat-grey { color: #aaaaaa !important; }
+    .hat-red { color: #ff6666 !important; }
+
+    /* MALWARES */
+    .malware-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .malware-card { background: #0d0000; border: 1px solid #2a0000; border-radius: 8px; padding: 12px; }
+    .malware-icon { font-size: 20px; color: #ff3333; margin-bottom: 6px; }
+    .malware-name { font-size: 12px; color: #ff4444; font-weight: 500; margin-bottom: 4px; }
+    .malware-desc { font-size: 11px; color: #4a2a2a; line-height: 1.5; }
+
+    /* FORMULÁRIO */
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 11px; color: #5a1a1a; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+    .field input, .field textarea, .field select {
+      width: 100%; background: #0d0000; border: 1px solid #2a0000; border-radius: 6px;
+      color: #ff6666; font-family: monospace; font-size: 13px;
+      padding: 10px 12px; outline: none; transition: border 0.2s;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: #ff3333; }
+    .field input::placeholder, .field textarea::placeholder { color: #3a1a1a; }
+    .field textarea { resize: vertical; min-height: 90px; }
+    .field select option { background: #0d0000; color: #ff6666; }
+    .send-btn {
+      width: 100%; background: transparent; border: 1px solid #ff3333;
+      color: #ff3333; font-family: monospace; font-size: 13px;
+      letter-spacing: 2px; text-transform: uppercase; padding: 12px;
+      border-radius: 6px; cursor: pointer; transition: all 0.2s; margin-top: 4px;
+    }
+    .send-btn:hover { background: #ff333318; }
+    .send-btn:active { transform: scale(0.98); }
+    .success-msg { display: none; font-size: 12px; color: #ff3333; text-align: center; padding: 10px; border: 1px solid #ff333344; border-radius: 6px; margin-top: 8px; }
+
+    .msg-list { display: flex; flex-direction: column; gap: 10px; margin-top: 1rem; margin-bottom: 2rem; }
+    .msg-card { background: #0d0000; border: 1px solid #2a0000; border-radius: 8px; padding: 12px 14px; }
+    .msg-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .msg-name { font-size: 12px; color: #ff3333; letter-spacing: 1px; }
+    .msg-type { font-size: 10px; color: #00ff41; background: #00ff4118; padding: 2px 8px; border-radius: 4px; }
+    .msg-text { font-size: 12px; color: #4a2a2a; line-height: 1.6; }
+    .msg-time { font-size: 10px; color: #2a0000; margin-top: 6px; }
+    .empty { font-size: 12px; color: #2a0000; text-align: center; padding: 1.5rem; }
+
+    .footer { text-align: center; padding: 1rem; font-size: 10px; color: #3a0000; letter-spacing: 2px; border-top: 1px solid #2a0000; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+
+  <!-- TELA DE AUTORIZAÇÃO -->
+  <div id="auth-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;">
+    <div style="width:100%;max-width:460px;">
+
+      <!-- logo -->
+      <div style="text-align:center;margin-bottom:2rem;">
+        <svg viewBox="0 0 80 50" xmlns="http://www.w3.org/2000/svg" width="80" height="50" style="margin-bottom:10px;">
+          <ellipse cx="40" cy="25" rx="38" ry="22" fill="#1a0000" opacity="0.9"/>
+          <ellipse cx="40" cy="25" rx="36" ry="20" fill="#6b0000" opacity="0.5"/>
+          <path d="M4,25 Q18,10 40,8 Q62,10 76,25 Q62,40 40,42 Q18,40 4,25 Z" fill="#8b0000" opacity="0.7"/>
+          <path d="M14,25 Q24,14 40,13 Q56,14 66,25 Q56,36 40,37 Q24,36 14,25 Z" fill="#aa1111"/>
+          <path d="M27,25 Q31,13 40,12 Q49,13 53,25 Q49,37 40,38 Q31,37 27,25 Z" fill="#cc1111"/>
+          <path d="M26,16 Q33,22 26,30" fill="none" stroke="#660000" stroke-width="0.6" opacity="0.6"/>
+          <path d="M54,16 Q47,22 54,30" fill="none" stroke="#660000" stroke-width="0.6" opacity="0.6"/>
+          <ellipse cx="40" cy="25" rx="5" ry="14" fill="#000"/>
+          <ellipse cx="40" cy="25" rx="4" ry="13" fill="#0d0000"/>
+          <ellipse cx="37" cy="19" rx="2.5" ry="4" fill="#ff4422" opacity="0.55"/>
+          <circle cx="36.5" cy="18" r="1.2" fill="#ff6644" opacity="0.8"/>
+          <ellipse cx="40" cy="25" rx="38" ry="22" fill="none" stroke="#660000" stroke-width="0.8" opacity="0.5"/>
+          <ellipse cx="40" cy="25" rx="38" ry="22" fill="none" stroke="#330000" stroke-width="4" opacity="0.7"/>
+        </svg>
+        <div style="font-size:20px;font-weight:700;color:#ff3333;letter-spacing:6px;font-family:monospace;">BLACKNODE</div>
+        <div style="font-size:10px;color:#3a0000;letter-spacing:3px;font-family:monospace;margin-top:4px;text-transform:uppercase;">Sistema de Controle de Acesso</div>
+      </div>
+
+      <!-- caixa -->
+      <div style="background:#0d0000;border:1px solid #3a0000;border-radius:10px;padding:1.5rem;">
+
+        <!-- step 1 -->
+        <div id="step1">
+          <div style="font-size:10px;color:#ff3333;letter-spacing:3px;text-transform:uppercase;font-family:monospace;margin-bottom:4px;">// identificação requerida</div>
+          <div style="font-size:11px;color:#5a1a1a;font-family:monospace;margin-bottom:1.5rem;line-height:1.6;">Antes de prosseguir, informe seus dados para registro. Sua solicitação será analisada.</div>
+
+          <div style="margin-bottom:12px;">
+            <div style="font-size:10px;color:#5a1a1a;letter-spacing:2px;text-transform:uppercase;font-family:monospace;margin-bottom:6px;">Deixe seu nome</div>
+            <input id="auth-name" type="text" placeholder="seu nome..." maxlength="40"
+              style="width:100%;background:#000;border:1px solid #2a0000;border-radius:6px;color:#ff6666;font-family:monospace;font-size:13px;padding:10px 12px;outline:none;">
+          </div>
+
+          <div style="margin-bottom:1.5rem;">
+            <div style="font-size:10px;color:#5a1a1a;letter-spacing:2px;text-transform:uppercase;font-family:monospace;margin-bottom:6px;">Por qual operador você foi indicado?</div>
+            <select id="auth-origin"
+              style="width:100%;background:#000;border:1px solid #2a0000;border-radius:6px;color:#ff6666;font-family:monospace;font-size:13px;padding:10px 12px;outline:none;">
+              <option value="">— selecione o operador —</option>
+              <option value="M0rtis">M0rtis — Líder Operacional</option>
+              <option value="Sp3ctr3">Sp3ctr3 — Reconhecimento</option>
+              <option value="V0id_H00k">V0id_H00k — Engenharia Social</option>
+              <option value="Th3 Gh0st">Th3 Gh0st — Infiltração de Rede</option>
+              <option value="N3cr0_X">N3cr0_X — Exploração de Sistemas</option>
+            </select>
+          </div>
+
+          <button onclick="submitAuth()"
+            style="width:100%;background:transparent;border:1px solid #ff3333;color:#ff3333;font-family:monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:12px;border-radius:6px;cursor:pointer;">
+            [ Solicitar Acesso ]
+          </button>
+          <div id="auth-error" style="display:none;font-size:11px;color:#ff3333;text-align:center;margin-top:8px;font-family:monospace;">// preencha todos os campos</div>
+        </div>
+
+        <!-- step 2: aguardando -->
+        <div id="step2" style="display:none;text-align:center;">
+          <div style="margin-bottom:1.5rem;">
+            <svg viewBox="0 0 48 48" width="48" height="48" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto;">
+              <circle cx="24" cy="24" r="20" fill="none" stroke="#ff3333" stroke-width="2" stroke-dasharray="4 3" opacity="0.6"/>
+              <circle cx="24" cy="24" r="6" fill="#ff3333" opacity="0.8"/>
+              <circle cx="24" cy="24" r="2" fill="#000"/>
+            </svg>
+          </div>
+          <div style="font-size:13px;color:#ff3333;font-family:monospace;letter-spacing:2px;margin-bottom:8px;" id="step2-name"></div>
+          <div style="font-size:11px;color:#5a1a1a;font-family:monospace;line-height:1.8;margin-bottom:1.5rem;">
+            Solicitação registrada.<br>
+            Indicado por: <span id="step2-origin" style="color:#ff4444;"></span><br><br>
+            Sua presença foi registrada em nossos logs.<br>
+            Aguarde até <span style="color:#ff3333;">24 horas</span> para que<br>
+            sua autorização seja processada.
+          </div>
+          <div style="font-size:10px;color:#3a0000;font-family:monospace;letter-spacing:1px;border-top:1px solid #2a0000;padding-top:12px;">
+            // nós saberemos se você tentar novamente antes do prazo
+          </div>
+          <button onclick="enterSite()"
+            style="margin-top:1.2rem;width:100%;background:transparent;border:1px solid #2a0000;color:#3a0000;font-family:monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:10px;border-radius:6px;cursor:pointer;">
+            [ Já tenho autorização ]
+          </button>
+        </div>
+
+      </div>
+
+      <div style="text-align:center;margin-top:1rem;font-size:10px;color:#1a0000;font-family:monospace;letter-spacing:2px;">BLACKNODE — ACESSO MONITORADO</div>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO PRINCIPAL (oculto até autorizar) -->
+  <div id="main-content" style="display:none;">
+
+  <div class="header">
+    <div class="logo-icon">
+      <svg viewBox="0 0 80 50" xmlns="http://www.w3.org/2000/svg" width="96" height="60">
+        <ellipse cx="40" cy="25" rx="38" ry="22" fill="#1a0000" opacity="0.9"/>
+        <ellipse cx="40" cy="25" rx="36" ry="20" fill="#6b0000" opacity="0.5"/>
+        <path d="M4,25 Q18,10 40,8 Q62,10 76,25 Q62,40 40,42 Q18,40 4,25 Z" fill="#8b0000" opacity="0.7"/>
+        <path d="M14,25 Q24,14 40,13 Q56,14 66,25 Q56,36 40,37 Q24,36 14,25 Z" fill="#aa1111"/>
+        <path d="M27,25 Q31,13 40,12 Q49,13 53,25 Q49,37 40,38 Q31,37 27,25 Z" fill="#cc1111"/>
+        <path d="M26,16 Q33,22 26,30" fill="none" stroke="#660000" stroke-width="0.6" opacity="0.6"/>
+        <path d="M54,16 Q47,22 54,30" fill="none" stroke="#660000" stroke-width="0.6" opacity="0.6"/>
+        <path d="M34,11 Q38,22 34,38" fill="none" stroke="#660000" stroke-width="0.5" opacity="0.4"/>
+        <path d="M46,11 Q42,22 46,38" fill="none" stroke="#660000" stroke-width="0.5" opacity="0.4"/>
+        <ellipse cx="40" cy="25" rx="5" ry="14" fill="#000"/>
+        <ellipse cx="40" cy="25" rx="4" ry="13" fill="#0d0000"/>
+        <ellipse cx="37" cy="19" rx="2.5" ry="4" fill="#ff4422" opacity="0.55"/>
+        <circle cx="36.5" cy="18" r="1.2" fill="#ff6644" opacity="0.8"/>
+        <path d="M6,20 Q14,14 22,16" fill="none" stroke="#ff2200" stroke-width="0.5" opacity="0.3"/>
+        <path d="M58,16 Q66,14 74,20" fill="none" stroke="#ff2200" stroke-width="0.5" opacity="0.3"/>
+        <ellipse cx="40" cy="25" rx="38" ry="22" fill="none" stroke="#660000" stroke-width="0.8" opacity="0.5"/>
+        <ellipse cx="40" cy="25" rx="38" ry="22" fill="none" stroke="#330000" stroke-width="4" opacity="0.7"/>
+      </svg>
+    </div>
+    <div class="logo">B<span>LACKNODE</span></div>
+    <div class="tagline">Digital Security Agency</div>
+  </div>
+
+  <div class="terminal-bar">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span style="color:#00ff41;font-size:12px;">root@omega:~$ awaiting_connection...<span class="cursor"></span></span>
+  </div>
+
+  <div class="container">
+
+    <!-- BANNER MENSAGEM DO DONO -->
+    <div id="owner-banner" style="background:#0a0812;border:1px solid #00ff4144;border-radius:8px;padding:14px 18px;margin-bottom:1.5rem;display:flex;align-items:flex-start;gap:12px;">
+      <span style="color:#00ff41;font-size:18px;margin-top:2px;"><i class="ti ti-message-2"></i></span>
+      <div style="flex:1;">
+        <div style="font-size:10px;color:#2a4a2a;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">// mensagem do operador</div>
+        <div id="owner-msg-text" style="font-size:13px;color:#b388ff;line-height:1.7;">⚠ ACESSO REGISTRADO ⚠
+Toda atividade realizada neste ambiente está sendo monitorada. Qualquer tentativa de copiar conteúdo, compartilhar links, redirecionar acessos ou utilizar credenciais não autorizadas será registrada em nossos logs.
+Sua presença foi detectada. A partir deste momento, seus rastros digitais estão sob observação.
+Pense duas vezes antes de divulgar qualquer informação deste local. Nós saberemos.
+Bem-vindo à rede.</div>
+      </div>
+      <button onclick="openEditBanner()" style="background:transparent;border:1px solid #1a0d2e;border-radius:6px;color:#5c4a7a;font-family:monospace;font-size:10px;padding:4px 10px;cursor:pointer;white-space:nowrap;">editar</button>
+    </div>
+
+    <!-- MODAL EDITAR MENSAGEM -->
+    <div id="edit-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000000cc;z-index:999;align-items:center;justify-content:center;">
+      <div style="background:#0a0812;border:1px solid #b388ff44;border-radius:10px;padding:1.5rem;width:90%;max-width:480px;">
+        <div style="font-size:11px;color:#00ff41;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">// editar mensagem</div>
+        <textarea id="edit-input" style="width:100%;background:#000000;border:1px solid #1a0d2e;border-radius:6px;color:#b388ff;font-family:monospace;font-size:13px;padding:10px 12px;outline:none;resize:vertical;min-height:80px;" placeholder="sua mensagem para os visitantes..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button onclick="saveBanner()" style="flex:1;background:transparent;border:1px solid #00ff41;color:#00ff41;font-family:monospace;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:10px;border-radius:6px;cursor:pointer;">[ salvar ]</button>
+          <button onclick="closeEditBanner()" style="background:transparent;border:1px solid #1a0d2e;color:#5c4a7a;font-family:monospace;font-size:12px;padding:10px 16px;border-radius:6px;cursor:pointer;">cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;color:#00ff41;letter-spacing:3px;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:8px;">
+      <span style="color:#2a1a3d;">//</span> estrutura operacional
+    </div>
+
+    <!-- LÍDER -->
+    <div class="service-card" style="border-color:#ff4444;margin-bottom:12px;display:flex;align-items:center;gap:16px;text-align:left;">
+      <div style="flex-shrink:0;">
+        <!-- ARANHA -->
+        <svg viewBox="0 0 40 40" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="20" cy="22" rx="6" ry="7" fill="#ff4444" opacity="0.9"/>
+          <ellipse cx="20" cy="13" rx="4" ry="4" fill="#ff4444" opacity="0.9"/>
+          <circle cx="18" cy="12" r="1" fill="#07050f"/>
+          <circle cx="22" cy="12" r="1" fill="#07050f"/>
+          <!-- pernas esquerda -->
+          <line x1="14" y1="18" x2="4" y2="12" stroke="#ff4444" stroke-width="1.3"/>
+          <line x1="14" y1="21" x2="3" y2="20" stroke="#ff4444" stroke-width="1.3"/>
+          <line x1="14" y1="24" x2="4" y2="29" stroke="#ff4444" stroke-width="1.3"/>
+          <line x1="15" y1="27" x2="7" y2="34" stroke="#ff4444" stroke-width="1.3"/>
+          <!-- pernas direita -->
+          <line x1="26" y1="18" x2="36" y2="12" stroke="#ff4444" stroke-width="1.3"/>
+          <line x1="26" y1="21" x2="37" y2="20" stroke="#ff4444" stroke-width="1.3"/>
+          <line x1="26" y1="24" x2="36" y2="29" stroke="#ff4444" stroke-width="1.3"/>
+          <line x1="25" y1="27" x2="33" y2="34" stroke="#ff4444" stroke-width="1.3"/>
+          <!-- teia -->
+          <line x1="20" y1="9" x2="20" y2="2" stroke="#ff444488" stroke-width="0.8"/>
+        </svg>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <span style="font-size:13px;color:#ff4444;font-weight:500;letter-spacing:2px;text-transform:uppercase;">M0rtis</span>
+          <span style="font-size:9px;background:#ff444422;color:#ff6666;padding:2px 8px;border-radius:4px;letter-spacing:1px;">COMMAND</span>
+        </div>
+        <div style="font-size:10px;color:#b388ff;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Líder Operacional — Fase 0</div>
+        <div style="font-size:10px;color:#3a2a2a;line-height:1.7;">Coordenação tática · Definição de alvos · Autorização de operações · Gestão de exfiltração</div>
+      </div>
+    </div>
+
+    <div style="font-size:10px;color:#2a1a3d;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;padding-left:4px;">// operadores por fase de ataque</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:1.5rem;">
+
+      <!-- FASE 1 -->
+      <div class="service-card" style="border-color:#b388ff44;">
+        <div style="margin-bottom:8px;">
+          <!-- OLHO -->
+          <svg viewBox="0 0 32 32" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2,16 Q16,4 30,16 Q16,28 2,16 Z" fill="none" stroke="#b388ff" stroke-width="1.5"/>
+            <circle cx="16" cy="16" r="5" fill="none" stroke="#b388ff" stroke-width="1.3"/>
+            <circle cx="16" cy="16" r="2.5" fill="#b388ff" opacity="0.9"/>
+            <circle cx="17.5" cy="14.5" r="0.8" fill="#07050f"/>
+            <!-- cílios superiores -->
+            <line x1="10" y1="10" x2="11.5" y2="13" stroke="#b388ff" stroke-width="0.8"/>
+            <line x1="16" y1="8" x2="16" y2="11" stroke="#b388ff" stroke-width="0.8"/>
+            <line x1="22" y1="10" x2="20.5" y2="13" stroke="#b388ff" stroke-width="0.8"/>
+          </svg>
+        </div>
+        <div style="font-size:12px;color:#b388ff;font-weight:500;letter-spacing:2px;text-transform:uppercase;">Sp3ctr3</div>
+        <div style="font-size:9px;color:#00ff41;letter-spacing:1px;margin-top:4px;text-transform:uppercase;">Reconhecimento — Fase 1</div>
+        <div style="font-size:10px;color:#2a3a2a;margin-top:6px;line-height:1.6;">OSINT · Network scanning · Footprinting · Fingerprinting</div>
+      </div>
+
+      <!-- FASE 2 -->
+      <div class="service-card" style="border-color:#ff880044;">
+        <div style="margin-bottom:8px;">
+          <!-- RATO -->
+          <svg viewBox="0 0 32 32" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <!-- corpo -->
+            <ellipse cx="16" cy="20" rx="8" ry="6" fill="#ff8800" opacity="0.85"/>
+            <!-- cabeça -->
+            <ellipse cx="24" cy="16" rx="5" ry="4.5" fill="#ff8800" opacity="0.85"/>
+            <!-- orelhas -->
+            <ellipse cx="21" cy="10" rx="2.5" ry="3" fill="none" stroke="#ff8800" stroke-width="1.3"/>
+            <ellipse cx="27" cy="10" rx="2.5" ry="3" fill="none" stroke="#ff8800" stroke-width="1.3"/>
+            <!-- olho -->
+            <circle cx="26" cy="15" r="1.2" fill="#07050f"/>
+            <circle cx="26.4" cy="14.6" r="0.4" fill="#ff8800"/>
+            <!-- nariz -->
+            <circle cx="29" cy="17" r="0.8" fill="#ff6600"/>
+            <!-- bigodes -->
+            <line x1="29" y1="17" x2="32" y2="15" stroke="#ff8800" stroke-width="0.7"/>
+            <line x1="29" y1="17" x2="32" y2="17" stroke="#ff8800" stroke-width="0.7"/>
+            <line x1="29" y1="17" x2="32" y2="19" stroke="#ff8800" stroke-width="0.7"/>
+            <!-- rabo -->
+            <path d="M8,22 Q2,24 1,28 Q0,31 3,30" fill="none" stroke="#ff8800" stroke-width="1.2"/>
+            <!-- patas -->
+            <line x1="12" y1="25" x2="10" y2="29" stroke="#ff8800" stroke-width="1.1"/>
+            <line x1="16" y1="26" x2="15" y2="30" stroke="#ff8800" stroke-width="1.1"/>
+            <line x1="20" y1="25" x2="21" y2="29" stroke="#ff8800" stroke-width="1.1"/>
+          </svg>
+        </div>
+        <div style="font-size:12px;color:#ff9933;font-weight:500;letter-spacing:2px;text-transform:uppercase;">V0id_H00k</div>
+        <div style="font-size:9px;color:#b388ff;letter-spacing:1px;margin-top:4px;text-transform:uppercase;">Engenharia Social — Fase 2</div>
+        <div style="font-size:10px;color:#2a2a1a;margin-top:6px;line-height:1.6;">Spear Phishing · Vishing · Pretexting · Credential harvesting</div>
+      </div>
+
+      <!-- FASE 3 -->
+      <div class="service-card" style="border-color:#00ff4144;">
+        <div style="margin-bottom:8px;">
+          <!-- POLVO -->
+          <svg viewBox="0 0 32 32" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <!-- cabeça -->
+            <ellipse cx="16" cy="12" rx="8" ry="7" fill="#00ff41" opacity="0.85"/>
+            <!-- olhos -->
+            <circle cx="13" cy="11" r="1.8" fill="#07050f"/>
+            <circle cx="19" cy="11" r="1.8" fill="#07050f"/>
+            <circle cx="13.5" cy="10.5" r="0.6" fill="#00ff41" opacity="0.6"/>
+            <circle cx="19.5" cy="10.5" r="0.6" fill="#00ff41" opacity="0.6"/>
+            <!-- tentáculos -->
+            <path d="M8,17 Q5,22 7,27 Q9,30 8,32" fill="none" stroke="#00ff41" stroke-width="1.4"/>
+            <path d="M11,18 Q9,23 11,27 Q13,30 12,32" fill="none" stroke="#00ff41" stroke-width="1.4"/>
+            <path d="M14,19 Q13,24 14,28 Q15,31 14,32" fill="none" stroke="#00ff41" stroke-width="1.4"/>
+            <path d="M18,19 Q17,24 18,28 Q19,31 18,32" fill="none" stroke="#00ff41" stroke-width="1.4"/>
+            <path d="M21,18 Q21,23 22,27 Q24,30 23,32" fill="none" stroke="#00ff41" stroke-width="1.4"/>
+            <path d="M24,17 Q26,22 25,27 Q24,30 25,32" fill="none" stroke="#00ff41" stroke-width="1.4"/>
+          </svg>
+        </div>
+        <div style="font-size:12px;color:#00ff41;font-weight:500;letter-spacing:2px;text-transform:uppercase;">Th3 Gh0st</div>
+        <div style="font-size:9px;color:#b388ff;letter-spacing:1px;margin-top:4px;text-transform:uppercase;">Infiltração de Rede — Fase 3</div>
+        <div style="font-size:10px;color:#1a3a1a;margin-top:6px;line-height:1.6;">ARP Poisoning · DNS Spoofing · MitM · Rootkit deployment</div>
+      </div>
+
+      <!-- FASE 4 -->
+      <div class="service-card" style="border-color:#ff44aa44;">
+        <div style="margin-bottom:8px;">
+          <!-- VÍRUS -->
+          <svg viewBox="0 0 32 32" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="7" fill="#ff44aa" opacity="0.85"/>
+            <circle cx="16" cy="16" r="3" fill="#07050f"/>
+            <circle cx="17" cy="15" r="1" fill="#ff44aa" opacity="0.6"/>
+            <!-- espinhos -->
+            <line x1="16" y1="9" x2="16" y2="5" stroke="#ff44aa" stroke-width="1.3"/>
+            <circle cx="16" cy="4" r="1.2" fill="#ff44aa"/>
+            <line x1="16" y1="23" x2="16" y2="27" stroke="#ff44aa" stroke-width="1.3"/>
+            <circle cx="16" cy="28" r="1.2" fill="#ff44aa"/>
+            <line x1="9" y1="16" x2="5" y2="16" stroke="#ff44aa" stroke-width="1.3"/>
+            <circle cx="4" cy="16" r="1.2" fill="#ff44aa"/>
+            <line x1="23" y1="16" x2="27" y2="16" stroke="#ff44aa" stroke-width="1.3"/>
+            <circle cx="28" cy="16" r="1.2" fill="#ff44aa"/>
+            <line x1="11" y1="11" x2="8" y2="8" stroke="#ff44aa" stroke-width="1.3"/>
+            <circle cx="7" cy="7" r="1.2" fill="#ff44aa"/>
+            <line x1="21" y1="11" x2="24" y2="8" stroke="#ff44aa" stroke-width="1.3"/>
+            <circle cx="25" cy="7" r="1.2" fill="#ff44aa"/>
+            <line x1="11" y1="21" x2="8" y2="24" stroke="#ff44aa" stroke-width="1.3"/>
+            <circle cx="7" cy="25" r="1.2" fill="#ff44aa"/>
+            <line x1="21" y1="21" x2="24" y2="24" stroke="#ff44aa" stroke-width="1.3"/>
+            <circle cx="25" cy="25" r="1.2" fill="#ff44aa"/>
+          </svg>
+        </div>
+        <div style="font-size:12px;color:#ff66bb;font-weight:500;letter-spacing:2px;text-transform:uppercase;">N3cr0_X</div>
+        <div style="font-size:9px;color:#00ff41;letter-spacing:1px;margin-top:4px;text-transform:uppercase;">Exploração de Sistemas — Fase 4</div>
+        <div style="font-size:10px;color:#2a1a2a;margin-top:6px;line-height:1.6;">Zero-Day · Buffer Overflow · SQL Injection · Privilege Escalation</div>
+      </div>
+
+    </div>
+
+    <hr class="divider">
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('ataques')">Tipos de Ataques</button>
+      <button class="tab-btn" onclick="showTab('chapeus')">Por Chapéu</button>
+      <button class="tab-btn" onclick="showTab('malware')">Malwares</button>
+      <button class="tab-btn" onclick="showTab('contato')">Contato</button>
+      <button class="tab-btn" onclick="showTab('msgs')">Transmissões</button>
+    </div>
+
+    <!-- ABA: ATAQUES -->
+    <div class="tab-content active" id="tab-ataques">
+
+      <div class="attack-category">
+        <div class="category-title"><i class="ti ti-lock-open"></i> Por Objetivo — Acesso Não Autorizado</div>
+        <div class="attack-grid">
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">Brute Force</span><span class="attack-tag">Acesso</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">Credential Stuffing</span><span class="attack-tag">Acesso</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">Password Spraying</span><span class="attack-tag">Acesso</span></div>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="attack-category">
+        <div class="category-title"><i class="ti ti-user-question"></i> Engenharia Social</div>
+        <div class="attack-grid">
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">Phishing</span><span class="attack-tag">Social</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">Spear Phishing</span><span class="attack-tag">Social</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">Vishing</span><span class="attack-tag">Social</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">Pretexting</span><span class="attack-tag">Social</span></div>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="attack-category">
+        <div class="category-title"><i class="ti ti-code"></i> Exploração de Vulnerabilidades</div>
+        <div class="attack-grid">
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">SQL Injection</span><span class="attack-tag">Web</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">XSS</span><span class="attack-tag">Web</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">Buffer Overflow</span><span class="attack-tag">Sistema</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">Zero-Day</span><span class="attack-tag">Crítico</span></div>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="attack-category">
+        <div class="category-title"><i class="ti ti-network"></i> Por Alvo — Redes</div>
+        <div class="attack-grid">
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">Man-in-the-Middle</span><span class="attack-tag">Rede</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">DNS Spoofing</span><span class="attack-tag">Rede</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">ARP Poisoning</span><span class="attack-tag">Rede</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">DDoS</span><span class="attack-tag">Rede</span></div>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="attack-category">
+        <div class="category-title"><i class="ti ti-device-desktop"></i> Sistemas e Dispositivos</div>
+        <div class="attack-grid">
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">Rootkit</span><span class="attack-tag">Sistema</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">Keylogger</span><span class="attack-tag">Sistema</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">RAT</span><span class="attack-tag">Sistema</span></div>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="attack-category">
+        <div class="category-title"><i class="ti ti-world"></i> Aplicações Web</div>
+        <div class="attack-grid">
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">CSRF</span><span class="attack-tag">Web</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">IDOR</span><span class="attack-tag">Web</span></div>
+            
+          </div>
+          <div class="attack-card">
+            <div class="attack-header"><span class="attack-name">Directory Traversal</span><span class="attack-tag">Web</span></div>
+            
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ABA: CHAPÉUS -->
+    <div class="tab-content" id="tab-chapeus">
+      <table class="hat-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hat-white">⬜ White Hat</td>
+          </tr>
+          <tr>
+            <td class="hat-black">⬛ Black Hat</td>
+          </tr>
+          <tr>
+            <td class="hat-grey">🔘 Grey Hat</td>
+          </tr>
+          <tr>
+            <td class="hat-red">🔴 Red Team</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ABA: MALWARE -->
+    <div class="tab-content" id="tab-malware">
+      <div class="malware-grid">
+        <div class="malware-card">
+          <div class="malware-icon"><i class="ti ti-lock"></i></div>
+          <div class="malware-name">Ransomware</div>
+        </div>
+        <div class="malware-card">
+          <div class="malware-icon"><i class="ti ti-eye"></i></div>
+          <div class="malware-name">Spyware</div>
+        </div>
+        <div class="malware-card">
+          <div class="malware-icon"><i class="ti ti-refresh"></i></div>
+          <div class="malware-name">Worm</div>
+        </div>
+        <div class="malware-card">
+          <div class="malware-icon"><i class="ti ti-horse"></i></div>
+          <div class="malware-name">Trojan</div>
+        </div>
+        <div class="malware-card">
+          <div class="malware-icon"><i class="ti ti-ad"></i></div>
+          <div class="malware-name">Adware</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA: CONTATO -->
+    <div class="tab-content" id="tab-contato">
+      <div class="field">
+        <label>Identificação</label>
+        <input type="text" id="inp-name" placeholder="seu codinome ou nome..." maxlength="40">
+      </div>
+      <div class="field">
+        <label>Tipo de solicitação</label>
+        <select id="inp-type">
+          <option value="Consulta">Consulta geral</option>
+          <option value="Pentest">Pentest / análise</option>
+          <option value="OSINT">Pesquisa OSINT</option>
+          <option value="Auditoria">Auditoria de segurança</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Mensagem</label>
+        <textarea id="inp-msg" placeholder="descreva sua solicitação..."></textarea>
+      </div>
+      <button class="send-btn" onclick="sendMsg()">[ Transmitir mensagem ]</button>
+      <div class="success-msg" id="success-msg">// mensagem recebida. aguarde contato.</div>
+    </div>
+
+    <!-- ABA: TRANSMISSÕES -->
+    <div class="tab-content" id="tab-msgs">
+      <div class="msg-list" id="msg-list">
+        <div class="empty" id="empty-msg">// nenhuma transmissão registrada</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">BLACKNODE © 2025 — ALL CHANNELS ENCRYPTED</div>
+
+  </div> <!-- /main-content -->
+
+  <script>
+    function submitAuth() {
+      const name = document.getElementById('auth-name').value.trim();
+      const origin = document.getElementById('auth-origin').value;
+      if (!name || !origin) {
+        document.getElementById('auth-error').style.display = 'block';
+        return;
+      }
+      document.getElementById('auth-error').style.display = 'none';
+      document.getElementById('step2-name').textContent = '// ' + name.toUpperCase() + ' — REGISTRADO';
+      document.getElementById('step2-origin').textContent = origin;
+      document.getElementById('step1').style.display = 'none';
+      document.getElementById('step2').style.display = 'block';
+    }
+
+    function enterSite() {
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+    }
+    function openEditBanner() {
+      document.getElementById('edit-input').value = document.getElementById('owner-msg-text').innerText;
+      document.getElementById('edit-modal').style.display = 'flex';
+    }
+    function closeEditBanner() {
+      document.getElementById('edit-modal').style.display = 'none';
+    }
+    function saveBanner() {
+      const val = document.getElementById('edit-input').value.trim();
+      if (val) document.getElementById('owner-msg-text').innerText = val;
+      closeEditBanner();
+    }
+
+    const messages = [];
+
+    function showTab(id) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    function pad(n) { return n.toString().padStart(2, '0'); }
+    function now() {
+      const d = new Date();
+      return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+
+    function sendMsg() {
+      const name = document.getElementById('inp-name').value.trim() || 'Anônimo';
+      const type = document.getElementById('inp-type').value;
+      const msg = document.getElementById('inp-msg').value.trim();
+      if (!msg) return;
+      messages.unshift({ name, type, msg, time: now() });
+      document.getElementById('inp-name').value = '';
+      document.getElementById('inp-msg').value = '';
+      const s = document.getElementById('success-msg');
+      s.style.display = 'block';
+      setTimeout(() => s.style.display = 'none', 2500);
+      renderMessages();
+    }
+
+    function renderMessages() {
+      const list = document.getElementById('msg-list');
+      const empty = document.getElementById('empty-msg');
+      if (messages.length === 0) { empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+      list.innerHTML = messages.map(m => `
+        <div class="msg-card">
+          <div class="msg-header">
+            <span class="msg-name">${m.name}</span>
+            <span class="msg-type">${m.type}</span>
+          </div>
+          <div class="msg-text">${m.msg}</div>
+          <div class="msg-time">// ${m.time}</div>
+        </div>
+      `).join('');
+    }
+
+    renderMessages();
+  </script>
+
+</body>
+</html>
